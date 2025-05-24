@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ genre.name }} Books - Book Review Paradise{% endblock %}
+
+{% block content %}
+<div class="genre-page">
+    <div class="genre-header">
+        <h1>{{ genre.name }} Books</h1>
+        <p>Discover our collection of {{ genre.name|lower }} books</p>
+    </div>
+
+    <div class="genre-navigation">
+        <div class="genre-list">
+            {% for g in all_genres %}
+            <a href="{% url 'genre' g.slug %}" class="genre-link {% if g == genre %}active{% endif %}">
+                {{ g.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="books-grid">
+        {% if books %}
+            {% for book in books %}
+            <div class="book-card">
+                <div class="book-image">
+                    <img src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <div class="book-rating">
+                        <span class="stars">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star {% if forloop.counter <= book.avg_rating %}text-yellow-400{% else %}text-gray-300{% endif %}"></i>
+                            {% endfor %}
+                        </span>
+                        <span class="rating-count">({{ book.review_count }} reviews)</span>
+                    </div>
+                    <a href="{% url 'submit' %}?book_title={{ book.title|urlencode }}&author={{ book.author|urlencode }}&genre={{ book.genre.name|urlencode }}" 
+                       class="write-review-btn">
+                        Write a Review
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-books">
+                <p>No books found in this genre yet.</p>
+                <a href="{% url 'submit' %}" class="btn btn-primary">Be the first to review a book!</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

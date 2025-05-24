@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Book Review Paradise</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div class="auth-background">
+        <div class="auth-overlay"></div>
+    </div>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>User Login</h2>
+            <form id="loginForm" class="auth-form" method="post">
+                {% csrf_token %}
+                {% if error %}
+                <div class="error-message">{{ error }}</div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember Me</label>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+                <div class="auth-links">
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="{% url 'register' %}" class="register-link">Create Account</a>
+                </div>
+            </form>
+        </div>
+        <div class="auth-footer">
+            <a href="{% url 'home' %}" class="back-home">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Review Paradise</title>
+    <link rel="stylesheet" href="{%static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html">Book Review Paradise</a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+           
+            <div class="dropdown">
+                <a href="#genres" class="dropdown-toggle">
+                    Browse by Genre
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="#fiction">Fiction</a>
+                    <a href="#mystery">Mystery</a>
+                    <a href="#science-fiction">Science Fiction</a>
+                    <a href="#fantasy">Fantasy</a>
+                    <a href="#non-fiction">Non-fiction</a>
+                </div>
+            </div>
+            <a href="#new-releases">New Releases</a>
+            <a href="{% url 'submit' %}">Write Review</a>
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" class="login-btn">Login</a>
+                <a href="{% url 'register' %}" class="register-btn">Register</a>
+                <a href="{% url 'logout' %}" class="logout-btn" id="logoutBtn" >
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Book Review Paradise</h1>
+            <p>Discover your next great read with passionate reviews and top picks across genres. Dive into thrilling mysteries, heartwarming fiction, and futuristic sci-fi all in one place.</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search books by title, author, or genre...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="cta-buttons">
+                <a href="#genres" class="btn primary">Browse by Genre</a>
+                <a href="#new-releases" class="btn secondary">Explore New Releases</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Results Section -->
+    <section id="searchResults" class="search-results">
+        <div class="container">
+            <h2>Search Results</h2>
+            <div class="results-grid"></div>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section class="featured-book">
+        <div class="container">
+            <h2 class="section-header">Featured Books</h2>
+            <div class="featured-books-grid">
+                {% for book in featured_books %}
+                <div class="book-details">
+                    <div class="book-cover">
+                        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                        {% if book.is_featured %}
+                        <span class="book-badge featured">Featured</span>
+                        {% endif %}
+                    </div>
+                    <div class="book-info">
+                        <h3>{{ book.title }}</h3>
+                        <p class="author">By {{ book.author }}</p>
+                        <div class="rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <span>{{ book.avg_rating|floatformat:1 }}</span>
+                            </div>
+                            <span class="rating-text">{{ book.review_count }} reviews</span>
+                        </div>
+                        <a href="{% url 'submit' %}?book_title={{ book.title }}&author={{ book.author }}" 
+                           class="review-btn">
+                            <i class="fas fa-pen"></i> Write a Review
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- New Releases Section -->
+    <section class="featured-book">
+        <div class="container">
+            <h2 class="section-header">New Releases</h2>
+            <div class="featured-books-grid">
+                {% for book in new_releases %}
+                <div class="book-details">
+                    <div class="book-cover">
+                        <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                        {% if book.is_new_release %}
+                        <span class="book-badge">New Release</span>
+                        {% endif %}
+                    </div>
+                    <div class="book-info">
+                        <h3>{{ book.title }}</h3>
+                        <p class="author">By {{ book.author }}</p>
+                        <div class="rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <span>{{ book.avg_rating|floatformat:1 }}</span>
+                            </div>
+                            <span class="rating-text">{{ book.review_count }} reviews</span>
+                        </div>
+                        <a href="{% url 'submit' %}?book_title={{ book.title }}&author={{ book.author }}" 
+                           class="review-btn">
+                            <i class="fas fa-pen"></i> Write a Review
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Genres Section -->
+    <section class="featured-book">
+        <div class="container">
+            <h2 class="section-header">Popular Genres</h2>
+            <div class="featured-books-grid">
+                {% for genre, books in genre_books %}
+                <div class="book-details">
+                    <div class="book-cover">
+                        <img src="{{ books.0.cover.url }}" alt="{{ genre.name }}">
+                        <span class="book-badge">{{ genre.name }}</span>
+                    </div>
+                    <div class="book-info">
+                        <h3>{{ genre.name }}</h3>
+                        <p class="author">{{ books|length }} books</p>
+                        <div class="rating">
+                            <div class="stars">
+                                <i class="fas fa-book"></i>
+                                <span>Top Books</span>
+                            </div>
+                        </div>
+                        <div class="genre-books">
+                            {% for book in books|slice:":3" %}
+                            <div class="genre-book-item">
+                                <span class="book-title">{{ book.title }}</span>
+                                <span class="book-author">{{ book.author }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <a href="#{{ genre.name|lower }}" class="review-btn">
+                            <i class="fas fa-list"></i> View All
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>Learn more about our passion for books and community-driven reviews.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Social Media</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Book Review Paradise. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+{% endblock %}
